@@ -1,0 +1,60 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>
+      <ion-icon name="time" slot="start"></ion-icon>
+      Historial Ecológico
+    </ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="loadActivities()">
+        <ion-icon slot="icon-only" name="refresh"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <!-- Estado de carga -->
+  <div *ngIf="isLoading" class="loading-state">
+    <ion-spinner name="crescent"></ion-spinner>
+    <p>Cargando actividades...</p>
+  </div>
+
+  <!-- Estado vacío -->
+  <div *ngIf="!isLoading && activities.length === 0" class="empty-state">
+    <ion-icon name="leaf-outline"></ion-icon>
+    <h3>No hay actividades registradas</h3>
+    <ion-button fill="outline" (click)="navigateToDashboard()">
+      Comenzar a registrar
+    </ion-button>
+  </div>
+
+  <!-- Lista de actividades -->
+  <ion-list *ngIf="!isLoading && activities.length > 0">
+    <ion-item-sliding *ngFor="let activity of activities">
+      <ion-item>
+        <ion-icon 
+          slot="start" 
+          [name]="getActivityIcon(activity.type)" 
+          [color]="getActivityColor(activity.type)">
+        </ion-icon>
+
+        <ion-label>
+          <h2>{{ activity.title || getDefaultTitle(activity.type) }}</h2>
+          <p>{{ getFormattedDate(activity.date) }}</p>
+          <p *ngIf="activity.description">{{ activity.description }}</p>
+          <p *ngIf="activity.data">{{ activity.data }}</p>
+        </ion-label>
+
+        <ion-thumbnail slot="end" *ngIf="activity.image">
+          <img [src]="activity.image.webPath || activity.image">
+        </ion-thumbnail>
+      </ion-item>
+
+      <ion-item-options side="end">
+        <ion-item-option color="danger" (click)="deleteActivity(activity)">
+          <ion-icon slot="icon-only" name="trash"></ion-icon>
+        </ion-item-option>
+      </ion-item-options>
+    </ion-item-sliding>
+  </ion-list>
+</ion-content>

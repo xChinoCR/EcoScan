@@ -1,0 +1,51 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>EcoScan QR</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="isScanning ? stopScanner() : startScanner()">
+        <ion-icon [name]="isScanning ? 'close' : 'qr-code-outline'"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <!-- Contenedor para la vista de la cámara -->
+  <div #scannerContainer class="scanner-container">
+    <video #videoElement autoplay playsinline class="scanner-video"></video>
+  </div>
+
+  <!-- Vista cuando no se está escaneando -->
+  <div class="scan-button-container" *ngIf="!isScanning">
+    <ion-button expand="block" (click)="startScanner()" shape="round">
+      <ion-icon name="qr-code-outline" slot="start"></ion-icon>
+      Iniciar Escáner QR
+    </ion-button>
+
+    <ion-card *ngIf="scanHistory.length > 0">
+      <ion-card-header>
+        <ion-card-title>Último escaneo</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <p>{{ scanHistory[0]?.data | slice:0:30 }}{{ scanHistory[0]?.data?.length > 30 ? '...' : '' }}</p>
+        <ion-text color="medium">
+          <small>{{ scanHistory[0]?.date | date:'medium' }}</small>
+        </ion-text>
+      </ion-card-content>
+    </ion-card>
+  </div>
+
+  <!-- Historial -->
+  <ion-list *ngIf="!isScanning && scanHistory.length > 0">
+    <ion-list-header>
+      <ion-label>Historial de escaneos</ion-label>
+    </ion-list-header>
+    <ion-item *ngFor="let item of scanHistory">
+      <ion-icon name="qr-code" slot="start"></ion-icon>
+      <ion-label>
+        <h3>{{ item.data | slice:0:30 }}{{ item.data?.length > 30 ? '...' : '' }}</h3>
+        <p>{{ item.date | date:'medium' }}</p>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+</ion-content>
